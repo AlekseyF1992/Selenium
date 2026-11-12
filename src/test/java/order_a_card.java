@@ -1,0 +1,55 @@
+package ru.netology;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class order_a_card {
+    private WebDriver driver;
+
+    @BeforeAll
+    public static void setupAll() {
+        WebDriverManager.chromedriver().setup();
+    }
+
+    @BeforeEach
+    void setup() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--no-sandbox");
+//options.addArguments("--headless");
+        driver = new ChromeDriver(options);
+
+        driver.get("http://localhost:9999/");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        driver.quit();
+        driver = null;
+    }
+
+    @Test
+    void shouldSubmitRequest() {
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Мраморов Алексей");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79220001111");
+        driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
+        driver.findElement(By.tagName("button")).click();
+        Object assertTrue;
+        WebElement element = driver.findElement(By.cssSelector("[data-test-id='order-success']"));
+
+
+        assertTrue(element.isDisplayed());
+        assertEquals("  Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.", element.getText());
+    }
+}

@@ -27,8 +27,8 @@ public class OrderCard {
     void setup() {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--disable-dev-shm-usage");
-        //options.addArguments("--no-sandbox");
-        options.addArguments("--headless");
+        options.addArguments("--no-sandbox");
+        //options.addArguments("--headless");
         driver = new ChromeDriver(options);
 
         driver.get("http://localhost:9999/");
@@ -62,7 +62,8 @@ public class OrderCard {
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
         driver.findElement(By.tagName("button")).click();
 
-        assertTrue(driver.findElement(By.cssSelector("[data-test-id='name']")).getAttribute("class").contains("input_invalid"));
+        assertEquals("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.",
+                driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText());
     }
 
     // ФИО: пустое
@@ -72,7 +73,8 @@ public class OrderCard {
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
         driver.findElement(By.tagName("button")).click();
 
-        assertTrue(driver.findElement(By.cssSelector("[data-test-id='name']")).getAttribute("class").contains("input_invalid"));
+        assertEquals("Поле обязательно для заполнения",
+                driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText());
     }
 
     // Телефон: пустое
@@ -82,7 +84,8 @@ public class OrderCard {
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
         driver.findElement(By.tagName("button")).click();
 
-        assertTrue(driver.findElement(By.cssSelector("[data-test-id='phone']")).getAttribute("class").contains("input_invalid"));
+        assertEquals("Поле обязательно для заполнения",
+                driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText());
     }
 
     // Телефон: неверный формат (короткий номер)
@@ -93,7 +96,8 @@ public class OrderCard {
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
         driver.findElement(By.tagName("button")).click();
 
-        assertTrue(driver.findElement(By.cssSelector("[data-test-id='phone']")).getAttribute("class").contains("input_invalid"));
+        assertEquals("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.",
+                driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText());
     }
 
     // Чекбокс: не отмечен
@@ -102,7 +106,9 @@ public class OrderCard {
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Мраморов Алексей");
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79220001111");
         driver.findElement(By.tagName("button")).click();
-
-        assertTrue(driver.findElement(By.cssSelector("[data-test-id='agreement']")).getAttribute("class").contains("input_invalid"));
+        
+        String textColor = driver.findElement(By.cssSelector("[data-test-id='agreement'] .checkbox__text")).getCssValue("color");
+        assertEquals("rgba(255, 92, 92, 1)", textColor,
+                "Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй" + textColor);
     }
 }

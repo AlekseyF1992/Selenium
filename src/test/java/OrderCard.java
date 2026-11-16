@@ -27,8 +27,8 @@ public class OrderCard {
     void setup() {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--disable-dev-shm-usage");
-        //options.addArguments("--no-sandbox");
-        options.addArguments("--headless");
+        options.addArguments("--no-sandbox");
+        //options.addArguments("--headless");
         driver = new ChromeDriver(options);
 
         driver.get("http://localhost:9999/");
@@ -61,10 +61,13 @@ public class OrderCard {
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79220001111");
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
         driver.findElement(By.tagName("button")).click();
+        WebElement element = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub"));
 
+        assertTrue(element.isDisplayed());
         assertEquals("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.",
                 driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText());
     }
+
 
     // ФИО: пустое
     @Test
@@ -72,7 +75,9 @@ public class OrderCard {
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79220001111");
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
         driver.findElement(By.tagName("button")).click();
+        WebElement element = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub"));
 
+        assertTrue(element.isDisplayed());
         assertEquals("Поле обязательно для заполнения",
                 driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText());
     }
@@ -83,7 +88,9 @@ public class OrderCard {
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Мраморов Алексей");
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
         driver.findElement(By.tagName("button")).click();
+        WebElement element = driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub"));
 
+        assertTrue(element.isDisplayed());
         assertEquals("Поле обязательно для заполнения",
                 driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText());
     }
@@ -95,7 +102,9 @@ public class OrderCard {
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+7922000111");
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
         driver.findElement(By.tagName("button")).click();
+        WebElement element = driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub"));
 
+        assertTrue(element.isDisplayed());
         assertEquals("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.",
                 driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText());
     }
@@ -106,9 +115,11 @@ public class OrderCard {
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Мраморов Алексей");
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79220001111");
         driver.findElement(By.tagName("button")).click();
+        WebElement element = driver.findElement(By.cssSelector("[data-test-id='agreement'].input_invalid"));
 
-        String textColor = driver.findElement(By.cssSelector("[data-test-id='agreement'] .checkbox__text")).getCssValue("color");
-        assertEquals("rgba(255, 92, 92, 1)", textColor,
-                "Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй" + textColor);
+        assertTrue(element.isDisplayed());
+        assertEquals("Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй",
+                driver.findElement(By.cssSelector("[data-test-id='agreement'].input_invalid")).getText());
+
     }
 }
